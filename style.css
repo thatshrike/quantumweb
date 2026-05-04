@@ -1,6 +1,6 @@
 body, html {
     margin: 0; padding: 0; width: 100%; height: 100%;
-    background-color: #121214; /* Darker, cooler background */
+    background-color: #0b0b0d; /* Slightly darker to contrast glass */
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     overflow: hidden;
     color: #e2e8f0;
@@ -8,18 +8,32 @@ body, html {
 
 #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
 
-/* Reusable Panel Styling */
+/* The new "Liquid Glass" styling applied to panels */
 #top-panel, #bottom-panel {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    background: #1e1e24; /* Slate gray */
-    border-radius: 12px;
-    border: 1px solid #33333b;
+    
+    /* Liquid Glass styling */
+    background: rgba(255, 255, 255, 0.03); /* Extremely low opacity base */
+    border-radius: 16px;
+    
+    /* Core Glassmorphism effects */
+    backdrop-filter: blur(15px) saturate(180%);
+    -webkit-backdrop-filter: blur(15px) saturate(180%);
+    
+    /* Border and Shadows create the 'liquid' edge */
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.5), /* Soft ambient shadow */
+        inset 0 0 15px rgba(255, 255, 255, 0.03), /* Internal soft glow */
+        inset 0 0 2px rgba(255, 255, 255, 0.1); /* Sharp inner ridge */
+    
     z-index: 2;
     box-sizing: border-box;
     width: 95%;
     max-width: 800px;
+    transition: transform 0.4s ease, opacity 0.3s ease; /* For hiding */
 }
 
 /* TOP PANEL */
@@ -28,65 +42,97 @@ body, html {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 25px;
+    padding: 18px 28px;
 }
 
-.title { font-size: 1.2rem; font-weight: 600; letter-spacing: 0.5px; }
+.main-title-group { display: flex; align-items: center; gap: 15px; }
+.title { font-size: 1.25rem; font-weight: 600; letter-spacing: 0.5px; color: #ffffff; }
 
-.stats-grid { display: flex; gap: 20px; text-align: center; }
+/* The FPS Counter style */
+#fps-counter {
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: #4ade80; /* Brighter neon green */
+    position: fixed; /* Keep it fixed in the corner */
+    top: 10px; left: 10px;
+    z-index: 10; /* Above everything */
+    background: rgba(0,0,0,0.4);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* Hide UI Button */
+#toggle-ui-btn {
+    position: fixed;
+    top: 30px;
+    left: 10px;
+    z-index: 10;
+    background: rgba(143, 180, 255, 0.1);
+    color: #8fb4ff;
+    border: 1px solid rgba(143, 180, 255, 0.2);
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: 0.2s;
+}
+#toggle-ui-btn:hover { background: rgba(143, 180, 255, 0.2); }
+
+.stats-grid { display: flex; gap: 25px; text-align: center; }
 .stat-col { display: flex; flex-direction: column; }
-.stat-label { font-size: 0.7rem; color: #94a3b8; font-weight: 600; letter-spacing: 1px; margin-bottom: 4px; }
-.stat-val { font-size: 1.1rem; font-weight: 700; color: #ffffff; }
-.designation { color: #ffffff; }
+.stat-label { font-size: 0.7rem; color: #94a3b8; font-weight: 600; letter-spacing: 1.2px; margin-bottom: 5px; text-transform: uppercase; }
+.stat-val { font-size: 1.15rem; font-weight: 700; color: #ffffff; }
+.designation { color: #8fb4ff; } /* Blue highlight used in reference */
 
 /* BOTTOM PANEL */
 #bottom-panel {
     bottom: 20px;
-    padding: 20px 25px;
+    padding: 22px 28px;
 }
 
 .controls-grid {
     display: grid;
     grid-template-columns: max-content 1fr max-content max-content 1fr max-content;
-    gap: 15px 20px;
+    gap: 15px 25px;
     align-items: center;
 }
 
-@media (max-width: 600px) {
-    /* Stack controls on very small mobile screens */
+@media (max-width: 700px) {
     .controls-grid { grid-template-columns: max-content 1fr max-content; }
-    #top-panel { flex-direction: column; gap: 15px; }
+    #top-panel { flex-direction: column; gap: 18px; }
+    .main-title-group { flex-direction: column; gap: 8px; }
 }
 
 label { font-size: 0.85rem; color: #cbd5e1; font-weight: 500; }
 
+/* Custom Sliders (More subtle for glass UI) */
+input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 5px; background: rgba(255,255,255,0.1); border-radius: 3px; }
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 16px; width: 8px; border-radius: 2px;
+    background: #8fb4ff; /* Match highlight blue */
+    margin-top: -5.5px;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(143, 180, 255, 0.5);
+}
+
 .val-box {
-    background: #27272f;
-    border: 1px solid #3f3f46;
-    padding: 4px 12px;
-    border-radius: 6px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: #ffffff;
+    padding: 4px 10px;
+    border-radius: 5px;
     font-size: 0.85rem;
     font-family: monospace;
-    min-width: 20px;
+    min-width: 25px;
     text-align: center;
 }
 
-/* Custom Sliders */
-input[type=range] {
-    -webkit-appearance: none;
-    width: 100%;
-    background: transparent;
+/* Hiding state class */
+.ui-hidden {
+    opacity: 0 !important;
+    pointer-events: none;
+    transform: translateX(-50%) translateY(20px) !important; /* Move panels slightly when hiding */
 }
-input[type=range]::-webkit-slider-runnable-track {
-    width: 100%; height: 6px;
-    background: #3f3f46;
-    border-radius: 3px;
-}
-input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    height: 18px; width: 8px;
-    border-radius: 2px;
-    background: #8fb4ff; /* The light blue from the screenshot */
-    margin-top: -6px;
-    cursor: pointer;
-}
+#top-panel.ui-hidden { transform: translateX(-50%) translateY(-20px) !important; }

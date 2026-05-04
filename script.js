@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 let n = 3, l = 1, m = 1, density = 0.6;
-const MAX_PARTICLES = 1000000; // Increased base count for higher density
+const MAX_PARTICLES = 1000000;
 
 const container = document.getElementById('canvas-container');
 const scene = new THREE.Scene();
@@ -25,7 +25,6 @@ const colors = new Float32Array(MAX_PARTICLES * 3);
 geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-// SHARPER SHADER
 const material = new THREE.ShaderMaterial({
     vertexShader: `
         attribute vec3 color;
@@ -33,7 +32,6 @@ const material = new THREE.ShaderMaterial({
         void main() {
             vColor = color;
             vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-            // Smaller, crisper point size
             gl_PointSize = 35.0 / -mvPosition.z; 
             gl_Position = projectionMatrix * mvPosition;
         }
@@ -41,10 +39,8 @@ const material = new THREE.ShaderMaterial({
     fragmentShader: `
         varying vec3 vColor;
         void main() {
-            // Cut off the edges sharply to make distinct points instead of fuzzy clouds
             vec2 xy = gl_PointCoord.xy - vec2(0.5);
             if(length(xy) > 0.5) discard;
-            // Slight transparency to allow dense areas to glow together
             gl_FragColor = vec4(vColor, 0.85); 
         }
     `,
@@ -112,25 +108,21 @@ function generateParticles() {
     
     geometry.setDrawRange(0, activeParticles);
 
-    // The maximum radius an electron is likely to be found expands with n^2
     const rMax = 12.0 * n * n; 
     
-    // Find a localized peak probability to normalize our Monte Carlo sampler
     let maxProb = 0;
     for(let i = 0; i < 3000; i++) {
         let r = Math.random() * rMax;
         let theta = Math.random() * Math.PI;
-        // Multiply by volume element r^2 * sin(theta) for spherical sampling
         let prob = probDensity(r, theta, n, l, m) * (r * r * Math.sin(theta)); 
         if(prob > maxProb) maxProb = prob;
     }
-    maxProb *= 1.1; // Add a 10% buffer
+    maxProb *= 1.1;
 
     let count = 0;
     let attempts = 0;
-    const maxAttempts = activeParticles * 150; // Prevent infinite loops
+    const maxAttempts = activeParticles * 150;
 
-    // Monte Carlo Rejection Sampling
     while(count < activeParticles && attempts < maxAttempts) {
         attempts++;
         
@@ -138,19 +130,14 @@ function generateParticles() {
         let theta = Math.random() * Math.PI;
         let phi = Math.random() * 2 * Math.PI;
         
-        // Calculate physics probability at this random point
         let p = probDensity(r, theta, n, l, m) * (r * r * Math.sin(theta));
         
-        // Only "spawn" the particle if a random roll is less than the probability
         if (Math.random() * maxProb < p) {
             
-            // Convert Spherical to Cartesian for rendering
             posAttr[count*3]     = r * Math.sin(theta) * Math.cos(phi);
             posAttr[count*3 + 1] = r * Math.sin(theta) * Math.sin(phi);
             posAttr[count*3 + 2] = r * Math.cos(theta);
 
-            // Distance-based color map (Purple -> Gold -> White)
-            // We scale the visual color gradient based on 'n' so it always looks good
             const distanceNorm = Math.min(r / (rMax * 0.35), 1.0);
             
             if (distanceNorm < 0.3) {
@@ -164,7 +151,6 @@ function generateParticles() {
         }
     }
     
-    // Hide any uncalculated particles if the loop exited early
     for(let i = count; i < activeParticles; i++) {
         posAttr[i*3] = posAttr[i*3+1] = posAttr[i*3+2] = 0;
     }
@@ -181,11 +167,23 @@ ids.forEach(id => {
     els[id + 'Val'] = document.getElementById(id + '-val');
 });
 const orbitalName = document.getElementById('orbital-name');
+const shapeDesc = document.getElementById('shape-desc'); // New reference
 const nHeader = document.getElementById('n-val-header');
 const lHeader = document.getElementById('l-val-header');
 const mHeader = document.getElementById('m-val-header');
 
 const lNames = ["s", "p", "d", "f", "g", "h", "i"];
+
+// New: Map 'l' values to common shape descriptions
+const orbitalShapes = {
+    0: "Sphere (s)",
+    1: "Dumbbell (p)",
+    2: "Clover/Donut (d)",
+    3: "Complex (f)",
+    4: "Complex (g)",
+    5: "Complex (h)",
+    6: "Complex (i)"
+};
 
 function updateUIConstraints() {
     els.lSlider.max = n - 1;
@@ -201,6 +199,14 @@ function updateUIConstraints() {
     els.densityVal.innerText = density.toFixed(1);
     
     orbitalName.innerText = `${n}${lNames[l]}`;
+    
+    // Dynamic shape logic for the d-orbital
+    let currentShape = orbitalShapes[l] || "Unknown";
+    if (l === 2) {
+        currentShape = (m === 0) ? "Dumbbell + Torus (d)" : "Clover (d)";
+    }
+    shapeDesc.innerText = currentShape;
+    
     generateParticles();
 }
 
@@ -217,15 +223,53 @@ window.addEventListener('resize', () => {
 
 updateUIConstraints();
 
+// --- NEW FUNCTIONALITY: FPS COUNTER --- //
+const fpsCounter = document.getElementById('fps-counter');
+let lastCalledTime;
+let fps;
+
+function calcFps() {
+    if(!lastCalledTime) {
+        lastCalledTime = performance.now();
+        fps = 0;
+        return;
+    }
+    let delta = (performance.now() - lastCalledTime)/1000;
+    lastCalledTime = performance.now();
+    fps = 1/delta;
+}
+
+// --- NEW FUNCTIONALITY: HIDE UI TOGGLE --- //
+const topPanel = document.getElementById('top-panel');
+const bottomPanel = document.getElementById('bottom-panel');
+const toggleBtn = document.getElementById('toggle-ui-btn');
+let uiVisible = true;
+
+toggleBtn.addEventListener('click', () => {
+    uiVisible = !uiVisible;
+    if (uiVisible) {
+        topPanel.classList.remove('ui-hidden');
+        bottomPanel.classList.remove('ui-hidden');
+        toggleBtn.innerText = "Hide UI";
+    } else {
+        topPanel.classList.add('ui-hidden');
+        bottomPanel.classList.add('ui-hidden');
+        toggleBtn.innerText = "Show UI";
+    }
+});
+
+
 function animate() {
     requestAnimationFrame(animate);
     
-    // The Z-axis is our quantization axis (where r * Math.cos(theta) maps).
-    // We tie the rotation speed directly to 'm'. 
-    // If m=0, it stops. If m is negative, it spins the opposite direction!
-    particleSystem.rotation.z += 0.002 * m;
+    // FPS Calculation
+    calcFps();
+    // Only update the display every 10 frames to avoid flickering
+    if (Math.random() < 0.1) {
+        fpsCounter.innerText = `FPS: ${fps.toFixed(0)}`;
+    }
     
-    // Reset any arbitrary Y rotation so the atom stays physically oriented
+    particleSystem.rotation.z += 0.002 * m;
     particleSystem.rotation.y = 0; 
     
     controls.update();

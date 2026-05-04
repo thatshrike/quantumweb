@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Quantum Atomic Simulator</title>
+    <title>Quantum Atomic Simulator - Liquid Glass UI</title>
     <link rel="stylesheet" href="style.css">
     
     <script async src="https://unpkg.com/es-module-shims@1.8.0/dist/es-module-shims.js"></script>
@@ -19,10 +19,16 @@
 <body>
     <div id="canvas-container"></div>
     
+    <div id="fps-counter">FPS: --</div>
+    <button id="toggle-ui-btn">Hide UI</button>
+
     <div id="top-panel">
-        <div class="title">Quantum Atomic Simulator</div>
+        <div class="main-title-group">
+            <div class="title">Quantum Atomic Simulator</div>
+        </div>
         <div class="stats-grid">
-            <div class="stat-col"><div class="stat-label">DESIGNATION</div><div class="stat-val designation" id="orbital-name">3p</div></div>
+            <div class="stat-col"><div class="stat-label">Designation</div><div class="stat-val designation" id="orbital-name">3p</div></div>
+            <div class="stat-col"><div class="stat-label">Shape</div><div class="stat-val" id="shape-desc">Dumbbell</div></div>
             <div class="stat-col"><div class="stat-label">N</div><div class="stat-val" id="n-val-header">3</div></div>
             <div class="stat-col"><div class="stat-label">L</div><div class="stat-val" id="l-val-header">1</div></div>
             <div class="stat-col"><div class="stat-label">M</div><div class="stat-val" id="m-val-header">1</div></div>
