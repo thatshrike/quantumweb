@@ -214,3 +214,17 @@ input[type=range]::-webkit-slider-thumb {
         border-radius: 16px 16px 0 16px;
     }
 }
+/* --- SHRIKE HIGHLIGHT EFFECT --- */
+.shrike-highlight {
+    box-shadow: 0 0 25px 8px rgba(143, 180, 255, 0.4), inset 0 0 10px rgba(143, 180, 255, 0.2) !important;
+    border-color: rgba(143, 180, 255, 0.8) !important;
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    z-index: 99 !important; /* Ensures the highlighted element sits above others */
+    position: relative; /* Required for z-index to take effect on some elements */
+}
+
+/* Specific subtle highlight for the canvas so it doesn't blind the user */
+#canvas-container.shrike-highlight {
+    box-shadow: inset 0 0 40px rgba(143, 180, 255, 0.3) !important;
+    border: none !important;
+}
