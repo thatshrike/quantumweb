@@ -110,7 +110,7 @@ body, html {
 label { font-size: 0.85rem; color: #cbd5e1; font-weight: 500; }
 
 /* Custom Sliders (More subtle for glass UI) */
-input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; appearance: none;  }
 input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 5px; background: rgba(255,255,255,0.1); border-radius: 3px; }
 input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none;
