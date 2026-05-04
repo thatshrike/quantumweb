@@ -276,3 +276,58 @@ function animate() {
     renderer.render(scene, camera);
 }
 animate();
+
+// --- SHRIKE TUTORIAL BOT --- //
+const shrikeContainer = document.getElementById('shrike-container');
+const shrikeText = document.getElementById('shrike-text');
+const shrikeNextBtn = document.getElementById('shrike-next');
+const shrikeSkipBtn = document.getElementById('shrike-skip');
+
+const tutorialSteps = [
+    "Hey! I'm Shrike. Welcome to the Quantum Atomic Simulator. Let me show you around!",
+    "Up top, you can track the designation and mathematical shape of the orbital you're currently viewing.",
+    "Down below, use the sliders to tweak the Principal (n), Azimuthal (l), and Magnetic (m) quantum numbers.",
+    "The Density slider lets you push more particles into the cloud. Careful not to completely fry your device tho, I ain't paying!!",
+    "You can click and drag anywhere on the screen to rotate the camera around the atom.",
+    "Use the 'Hide UI' button if you just want to vibe with the quantum wavefunction. That's all from me. Enjoy the sim!"
+];
+
+let currentStep = 0;
+
+function showShrikeStep(step) {
+    shrikeText.innerText = tutorialSteps[step];
+    if (step === tutorialSteps.length - 1) {
+        shrikeNextBtn.innerText = "Finish";
+    } else {
+        shrikeNextBtn.innerText = "Next";
+    }
+}
+
+function endTutorial() {
+    // Set a flag in the user's browser so they aren't bothered again
+    localStorage.setItem('shrikeTutorialCompleted', 'true');
+    shrikeContainer.style.opacity = '0';
+    shrikeContainer.style.pointerEvents = 'none';
+    setTimeout(() => shrikeContainer.remove(), 400); // Wait for fade out, then remove from DOM
+}
+
+// Check if the user has already completed or skipped the tutorial
+if (!localStorage.getItem('shrikeTutorialCompleted')) {
+    // Show Shrike
+    shrikeContainer.classList.remove('ui-hidden');
+    showShrikeStep(currentStep);
+
+    shrikeNextBtn.addEventListener('click', () => {
+        currentStep++;
+        if (currentStep >= tutorialSteps.length) {
+            endTutorial();
+        } else {
+            showShrikeStep(currentStep);
+        }
+    });
+
+    shrikeSkipBtn.addEventListener('click', endTutorial);
+} else {
+    // If they already took it, completely remove Shrike from the DOM
+    shrikeContainer.remove(); 
+}

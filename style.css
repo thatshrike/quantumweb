@@ -140,3 +140,77 @@ input[type=range]::-webkit-slider-thumb {
     transform: translateX(-50%) translateY(20px) !important; /* Move panels slightly when hiding */
 }
 #top-panel.ui-hidden { transform: translateX(-50%) translateY(-20px) !important; }
+
+/* --- SHRIKE TUTORIAL BOT --- */
+#shrike-container {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    display: flex;
+    align-items: flex-end;
+    gap: 15px;
+    z-index: 100;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+#shrike-avatar {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    border: 2px solid rgba(143, 180, 255, 0.4);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    background: #0b0b0d; 
+    object-fit: cover;
+}
+
+#shrike-bubble {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px) saturate(180%);
+    -webkit-backdrop-filter: blur(15px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px 16px 4px 16px;
+    padding: 16px;
+    max-width: 260px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    color: #fff;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.shrike-controls {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.shrike-controls button {
+    background: rgba(143, 180, 255, 0.1);
+    color: #8fb4ff;
+    border: 1px solid rgba(143, 180, 255, 0.2);
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.shrike-controls button:hover {
+    background: rgba(143, 180, 255, 0.3);
+}
+
+/* Mobile Responsiveness - Keeps UI clean and prevents overlap */
+@media (max-width: 700px) {
+    #shrike-container {
+        bottom: 20px;
+        right: 20px;
+        left: 20px; 
+        flex-direction: column-reverse; 
+        align-items: flex-end;
+    }
+    #shrike-bubble {
+        max-width: 100%;
+        border-radius: 16px 16px 0 16px;
+    }
+}
