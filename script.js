@@ -288,7 +288,7 @@ const tutorialSteps = [
     { text: "Hey! I'm Shrike. Welcome to the Quantum Atomic Simulator. Let me show you around!", target: null },
     { text: "Up top, you can track the designation and mathematical shape of the orbital you're currently viewing.", target: 'top-panel' },
     { text: "Down below, use the sliders to tweak the Principal (n), Azimuthal (l), and Magnetic (m) quantum numbers.", target: 'bottom-panel' },
-    { text: "The Density slider lets you push more particles into the cloud. Careful not to completely fry your RTX 3050!", target: 'density-slider' },
+    { text: "The Density slider lets you push more particles into the cloud. Careful not to completely fry your device!!", target: 'density-slider' },
     { text: "You can click and drag anywhere on the screen to rotate the camera around the atom.", target: 'canvas-container' },
     { text: "Use the 'Hide UI' button if you just want to vibe with the quantum wavefunction. That's all from me. Enjoy the sim!", target: 'toggle-ui-btn' }
 ];
