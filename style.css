@@ -99,7 +99,11 @@ body, html {
 
 @media (max-width: 700px) {
     .controls-grid { grid-template-columns: max-content 1fr max-content; }
-    #top-panel { flex-direction: column; gap: 18px; }
+    #top-panel { 
+        flex-direction: column; 
+        gap: 18px; 
+        top: 80px; /* Pushes the glass panel down to clear the fixed buttons */
+    }
     .main-title-group { flex-direction: column; gap: 8px; }
 }
 
