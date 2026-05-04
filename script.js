@@ -176,13 +176,13 @@ const lNames = ["s", "p", "d", "f", "g", "h", "i"];
 
 // New: Map 'l' values to common shape descriptions
 const orbitalShapes = {
-    0: "Sphere (s)",
-    1: "Dumbbell (p)",
-    2: "Clover/Donut (d)",
-    3: "Complex (f)",
-    4: "Complex (g)",
-    5: "Complex (h)",
-    6: "Complex (i)"
+    0: "Sphere",
+    1: "Dumbbell",
+    2: "Clover/Donut",
+    3: "Complex",
+    4: "Complex",
+    5: "Complex",
+    6: "Complex"
 };
 
 function updateUIConstraints() {
